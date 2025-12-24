@@ -41,5 +41,5 @@ jobs:
               --warehouse "$SF_WAREHOUSE" \
               --database "$SF_DATABASE" \
               --schema "$SF_SCHEMA" \
-              --file "$f"
+              --filename  "$f"
           done
