@@ -28,3 +28,18 @@ jobs:
           SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
         run: snow connection test -x
+
+      - name: Execute SQL
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SF_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SF_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SF_SCHEMA }}
+        run: |
+          for f in sql/*.sql; do
+            echo "▶ Executing $f"
+            snow sql --filename "$f"
+          done
