@@ -1,32 +1,57 @@
-name: Deploy scripts to preprod
+name: Snowflake Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      SNOWFLAKE_CONNECTIONS_DEFAULT_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-      SNOWFLAKE_CONNECTIONS_DEFAULT_USER: ${{ secrets.SF_USER }}
-      SNOWFLAKE_CONNECTIONS_DEFAULT_PASSWORD: ${{ secrets.SF_PASSWORD }}
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install snowflake-cli
-        uses: Snowflake-Labs/snowflake-cli-action@v1.5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          cli-version: "latest"
-          default-config-file-path: ".snowflake/config.toml"
+          python-version: "3.11"
 
-      - name: Fetch repository changes
-        run: snow git fetch my_git_repo
+      - name: Install Snowflake CLI
+        run: pip install snowflake-cli-labs
 
-      - name: Deploy scripts to preprod environment
-        run: snow git execute @my_git_repo/branches/main/scripts/* \
-          -D "environment='preprod'"
+      - name: Configure Snowflake connection
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+          SNOWFLAKE_HOST: ${{ secrets.SF_HOST }}
+        run: |
+          snow connection add \
+            --connection-name default \
+            --accountname "$SNOWFLAKE_ACCOUNT" \
+            --host "$SNOWFLAKE_HOST" \
+            --username "$SNOWFLAKE_USER" \
+            --password "$SNOWFLAKE_PASSWORD" \
+            --rolename "$SNOWFLAKE_ROLE" \
+            --warehouse "$SNOWFLAKE_WAREHOUSE" \
+            --dbname "$SNOWFLAKE_DATABASE" \
+            --schemaname "$SNOWFLAKE_SCHEMA" \
+            --port "443" \
+            --region "le05442" \
+
+      - name: Deploy SQL
+        env:
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
+        run: |
+          for f in sql/*.sql; do
+            echo "▶ Executing $f"
+            snow sql \
+              --filename "$f" \
+              --database "$SNOWFLAKE_DATABASE" \
+              --schema "$SNOWFLAKE_SCHEMA"
