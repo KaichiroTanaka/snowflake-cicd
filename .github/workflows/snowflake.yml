@@ -1,45 +1,32 @@
-name: Snowflake Deploy
+name: Deploy scripts to preprod
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      SNOWFLAKE_CONNECTIONS_DEFAULT_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
+      SNOWFLAKE_CONNECTIONS_DEFAULT_USER: ${{ secrets.SF_USER }}
+      SNOWFLAKE_CONNECTIONS_DEFAULT_PASSWORD: ${{ secrets.SF_PASSWORD }}
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Install snowflake-cli
+        uses: Snowflake-Labs/snowflake-cli-action@v1.5
         with:
-          python-version: "3.11"
+          cli-version: "latest"
+          default-config-file-path: ".snowflake/config.toml"
 
-      - name: Install Snowflake CLI
-        run: pip install snowflake-cli-labs
+      - name: Fetch repository changes
+        run: snow git fetch my_git_repo
 
-      - name: test connection
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SF_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
-        run: snow connection test -x
-
-      - name: Execute SQL
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SF_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SF_DATABASE }}
-          SNOWFLAKE_SCHEMA: ${{ secrets.SF_SCHEMA }}
-        run: |
-          for f in sql/*.sql; do
-            echo "▶ Executing $f"
-            snow sql --filename "$f"
-          done
+      - name: Deploy scripts to preprod environment
+        run: snow git execute @my_git_repo/branches/main/scripts/* \
+          -D "environment='preprod'"
