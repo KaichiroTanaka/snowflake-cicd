@@ -29,12 +29,12 @@ jobs:
           SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
         run: |
           snow connection add \
-            --name default \
-            --account "$SNOWFLAKE_ACCOUNT" \
-            --user "$SNOWFLAKE_USER" \
+            --connection-name default \
+            --accountname "$SNOWFLAKE_ACCOUNT" \
+            --username "$SNOWFLAKE_USER" \
             --password "$SNOWFLAKE_PASSWORD" \
-            --role "$SNOWFLAKE_ROLE" \
-            --warehouse "$SNOWFLAKE_WAREHOUSE"
+            --rolename "$SNOWFLAKE_ROLE" \
+            --warehousename "$SNOWFLAKE_WAREHOUSE"
 
       - name: Deploy SQL
         env:
