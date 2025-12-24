@@ -22,7 +22,7 @@ jobs:
 
       - name: test connection
         env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SF_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SF_USER }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
           SNOWFLAKE_ROLE: ${{ secrets.SF_ROLE }}
