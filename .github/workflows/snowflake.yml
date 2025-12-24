@@ -33,8 +33,6 @@ jobs:
             --accountname "$SNOWFLAKE_ACCOUNT" \
             --username "$SNOWFLAKE_USER" \
             --password "$SNOWFLAKE_PASSWORD" \
-            --rolename "$SNOWFLAKE_ROLE" \
-            --warehousename "$SNOWFLAKE_WAREHOUSE"
 
       - name: Deploy SQL
         env:
