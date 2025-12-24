@@ -43,6 +43,7 @@ jobs:
             --schemaname "$SNOWFLAKE_SCHEMA" \
             --port "443" \
             --region "le05442" \
+            --authenticator "snowflake"
 
       - name: Deploy SQL
         env:
