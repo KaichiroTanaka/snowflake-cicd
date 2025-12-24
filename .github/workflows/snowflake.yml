@@ -40,7 +40,8 @@ jobs:
             --rolename "$SNOWFLAKE_ROLE" \
             --warehouse "$SNOWFLAKE_WAREHOUSE" \
             --dbname "$SNOWFLAKE_DATABASE" \
-            --schemaname "$SNOWFLAKE_SCHEMA"
+            --schemaname "$SNOWFLAKE_SCHEMA" \
+            --port "443"
 
       - name: Deploy SQL
         env:
