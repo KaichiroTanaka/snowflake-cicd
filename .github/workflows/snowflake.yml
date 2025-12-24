@@ -1,4 +1,4 @@
-name: Snowflake Deploy test
+name: Snowflake Deploy
 
 on:
   push:
