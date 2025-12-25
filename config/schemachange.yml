@@ -1,0 +1,11 @@
+snowflake:
+  account: ZHEKFKV-LE05442
+  user: TANAKA
+  role: ACCOUNTADMIN
+  warehouse: CI_WH
+  database: MY_DB
+  schema: PUBLIC
+
+schemachange:
+  migrations-folder: migrations
+  change-history-table: CHANGE_HISTORY

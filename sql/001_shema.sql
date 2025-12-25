@@ -1,5 +1,0 @@
-CREATE DATABASE IF NOT EXISTS APP_DB
-  COMMENT = 'Application database';
-
-CREATE SCHEMA IF NOT EXISTS APP_DB.PUBLIC
-  COMMENT = 'Main application schema';
